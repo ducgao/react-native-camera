@@ -81,7 +81,7 @@ public class CameraView extends FrameLayout {
 
     private Context mContext;
 
-    private final DisplayOrientationDetector mDisplayOrientationDetector;
+    protected DisplayOrientationDetector mDisplayOrientationDetector;
 
     public CameraView(Context context, boolean fallbackToOldApi) {
         this(context, null, fallbackToOldApi);
@@ -112,14 +112,27 @@ public class CameraView extends FrameLayout {
         } else {
             mImpl = new Camera2Api23(mCallbacks, preview, context);
         }
+    }
 
-        // Display orientation detector
-        mDisplayOrientationDetector = new DisplayOrientationDetector(context) {
-            @Override
-            public void onDisplayOrientationChanged(int displayOrientation) {
-                mImpl.setDisplayOrientation(displayOrientation);
-            }
-        };
+    protected void setAwesomeCameraBehaviorEnable(boolean enable) {
+        mImpl.setAwesomeCameraBehaviourEnable(enable);
+
+        if (enable) {
+            mDisplayOrientationDetector = new DisplayOrientationDetector2(getContext()) {
+                @Override
+                public void onDisplayOrientationChanged(int displayOrientation) {
+                    mImpl.setDisplayOrientation(displayOrientation);
+                }
+            };
+        }
+        else {
+            mDisplayOrientationDetector = new DisplayOrientationDetector(getContext()) {
+                @Override
+                public void onDisplayOrientationChanged(int displayOrientation) {
+                    mImpl.setDisplayOrientation(displayOrientation);
+                }
+            };
+        }
     }
 
     @NonNull
@@ -136,14 +149,14 @@ public class CameraView extends FrameLayout {
     @Override
     protected void onAttachedToWindow() {
         super.onAttachedToWindow();
-        if (!isInEditMode()) {
+        if (!isInEditMode() && mDisplayOrientationDetector != null) {
             mDisplayOrientationDetector.enable(ViewCompat.getDisplay(this));
         }
     }
 
     @Override
     protected void onDetachedFromWindow() {
-        if (!isInEditMode()) {
+        if (!isInEditMode() && mDisplayOrientationDetector != null) {
             mDisplayOrientationDetector.disable();
         }
         super.onDetachedFromWindow();

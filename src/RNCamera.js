@@ -98,6 +98,7 @@ type PropsType = typeof View.props & {
   captureAudio?: boolean,
   useCamera2Api?: boolean,
   playSoundOnCapture?: boolean,
+  enableAwesomeCameraBehaviour?: boolean,
   videoStabilizationMode?: number | string,
   pictureSize?: string,
 };
@@ -202,6 +203,7 @@ export default class Camera extends React.Component<PropsType, StateType> {
     captureAudio: PropTypes.bool,
     useCamera2Api: PropTypes.bool,
     playSoundOnCapture: PropTypes.bool,
+    enableAwesomeCameraBehaviour: PropTypes.bool,
     videoStabilizationMode: PropTypes.oneOfType([PropTypes.string, PropTypes.number]),
     pictureSize: PropTypes.string,
   };
@@ -450,6 +452,7 @@ const RNCamera = requireNativeComponent('RNCamera', Camera, {
     accessibilityLabel: true,
     accessibilityLiveRegion: true,
     barCodeScannerEnabled: true,
+    enableAwesomeCameraBehaviour: false,
     googleVisionBarcodeDetectorEnabled: true,
     faceDetectorEnabled: true,
     textRecognizerEnabled: true,

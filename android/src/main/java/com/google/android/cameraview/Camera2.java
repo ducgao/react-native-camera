@@ -242,6 +242,8 @@ class Camera2 extends CameraViewImpl implements MediaRecorder.OnInfoListener, Me
 
     private Rect mInitialCropRegion;
 
+    private Boolean mEnableAwesomeCameraBehavior;
+
     Camera2(Callback callback, PreviewImpl preview, Context context) {
         super(callback, preview);
         mCameraManager = (CameraManager) context.getSystemService(Context.CAMERA_SERVICE);
@@ -609,7 +611,10 @@ class Camera2 extends CameraViewImpl implements MediaRecorder.OnInfoListener, Me
     @Override
     void setDisplayOrientation(int displayOrientation) {
         mDisplayOrientation = displayOrientation;
-        mPreview.setDisplayOrientation(mDisplayOrientation);
+
+        if (!mEnableAwesomeCameraBehavior) {
+            mPreview.setDisplayOrientation(mDisplayOrientation);
+        }
     }
 
     /**
@@ -815,6 +820,11 @@ class Camera2 extends CameraViewImpl implements MediaRecorder.OnInfoListener, Me
     @Override
     public Size getPreviewSize() {
         return new Size(mPreview.getWidth(), mPreview.getHeight());
+    }
+
+    @Override
+    public void setAwesomeCameraBehaviourEnable(boolean enable) {
+        mEnableAwesomeCameraBehavior = enable;
     }
 
     /**

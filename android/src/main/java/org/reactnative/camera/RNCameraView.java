@@ -43,6 +43,8 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
   private List<String> mBarCodeTypes = null;
   private Boolean mPlaySoundOnCapture = false;
 
+  private Boolean mEnableAwesomeCameraBehaviour = false;
+
   private boolean mIsPaused = false;
   private boolean mIsNew = true;
 
@@ -427,6 +429,11 @@ public class RNCameraView extends CameraView implements LifecycleEventListener, 
     }
 
     RNCameraViewHelper.emitBarcodeDetectionErrorEvent(this, barcodeDetector);
+  }
+
+  public void setAwesomeCameraBehaviourEnable(boolean enable) {
+    this.mEnableAwesomeCameraBehaviour = enable;
+    super.setAwesomeCameraBehaviorEnable(enable);
   }
 
   @Override

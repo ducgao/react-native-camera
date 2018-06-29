@@ -107,6 +107,8 @@ abstract class CameraViewImpl {
 
     abstract public Size getPreviewSize();
 
+    abstract public void setAwesomeCameraBehaviourEnable(boolean enable);
+
     interface Callback {
 
         void onCameraOpened();

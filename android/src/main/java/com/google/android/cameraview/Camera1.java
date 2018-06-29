@@ -104,6 +104,8 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
 
     private SurfaceTexture mPreviewTexture;
 
+    private Boolean mEnableCameraAwesomeBehaviour;
+
     Camera1(Callback callback, PreviewImpl preview) {
         super(callback, preview);
         preview.setCallback(new PreviewImpl.Callback() {
@@ -457,7 +459,11 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
                 mCamera.stopPreview();
                 mIsPreviewActive = false;
             }
-            mCamera.setDisplayOrientation(calcDisplayOrientation(displayOrientation));
+
+            if (!mEnableCameraAwesomeBehaviour) {
+                mCamera.setDisplayOrientation(calcDisplayOrientation(displayOrientation));
+            }
+
             if (needsToStopPreview) {
                 startCameraPreview();
             }
@@ -492,6 +498,11 @@ class Camera1 extends CameraViewImpl implements MediaRecorder.OnInfoListener,
     public Size getPreviewSize() {
         Camera.Size cameraSize = mCameraParameters.getPreviewSize();
         return new Size(cameraSize.width, cameraSize.height);
+    }
+
+    @Override
+    public void setAwesomeCameraBehaviourEnable(boolean enable) {
+        mEnableCameraAwesomeBehaviour = enable;
     }
 
     /**

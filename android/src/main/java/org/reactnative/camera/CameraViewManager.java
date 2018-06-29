@@ -167,4 +167,9 @@ public class CameraViewManager extends ViewGroupManager<RNCameraView> {
   public void setTextRecognizing(RNCameraView view, boolean textRecognizerEnabled) {
     view.setShouldRecognizeText(textRecognizerEnabled);
   }
+
+  @ReactProp(name = "enableAwesomeCameraBehaviour")
+  public void setAwesomeCameraBehaviour(RNCameraView view, boolean isEnable) {
+    view.setAwesomeCameraBehaviourEnable(isEnable);
+  }
 }

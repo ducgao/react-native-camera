@@ -28,7 +28,7 @@ import android.view.Surface;
  */
 abstract class DisplayOrientationDetector {
 
-    private final OrientationEventListener mOrientationEventListener;
+    protected OrientationEventListener mOrientationEventListener;
 
     /** Mapping from Surface.Rotation_n to degrees. */
     static final SparseIntArray DISPLAY_ORIENTATIONS = new SparseIntArray();
@@ -42,7 +42,7 @@ abstract class DisplayOrientationDetector {
 
     Display mDisplay;
 
-    private int mLastKnownDisplayOrientation = 0;
+    protected int mLastKnownDisplayOrientation = 0;
 
     public DisplayOrientationDetector(Context context) {
         mOrientationEventListener = new OrientationEventListener(context) {
@@ -63,6 +63,9 @@ abstract class DisplayOrientationDetector {
                 }
             }
         };
+    }
+
+    protected DisplayOrientationDetector() {
     }
 
     public void enable(Display display) {
