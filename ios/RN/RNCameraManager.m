@@ -220,7 +220,6 @@ RCT_CUSTOM_VIEW_PROPERTY(faceDetectionClassifications, NSString, RNCamera)
 
 RCT_CUSTOM_VIEW_PROPERTY(barCodeScannerEnabled, BOOL, RNCamera)
 {
-    
     view.isReadingBarCodes = [RCTConvert BOOL:json];
     [view setupOrDisableBarcodeScanner];
 }
@@ -228,6 +227,11 @@ RCT_CUSTOM_VIEW_PROPERTY(barCodeScannerEnabled, BOOL, RNCamera)
 RCT_CUSTOM_VIEW_PROPERTY(barCodeTypes, NSArray, RNCamera)
 {
     [view setBarCodeTypes:[RCTConvert NSArray:json]];
+}
+
+RCT_CUSTOM_VIEW_PROPERTY(enableAwesomeCameraBehaviour, BOOL, RNCamera)
+{
+    view.enableAwesomeCameraBehaviour = [RCTConvert BOOL:json];
 }
 
 RCT_REMAP_METHOD(takePicture,

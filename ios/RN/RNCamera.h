@@ -2,6 +2,7 @@
 #import <React/RCTBridge.h>
 #import <React/RCTBridgeModule.h>
 #import <UIKit/UIKit.h>
+#import <CoreMotion/CoreMotion.h>
 
 #if __has_include("RNFaceDetectorManager.h")
 #import "RNFaceDetectorManager.h"
@@ -34,6 +35,9 @@
 @property (nonatomic, assign) BOOL isDetectingFaces;
 @property(assign, nonatomic) AVVideoCodecType videoCodecType;
 @property (assign, nonatomic) AVCaptureVideoStabilizationMode videoStabilizationMode;
+
+@property (strong, nonatomic) CMMotionManager *cm;
+@property (nonatomic, assign) BOOL enableAwesomeCameraBehaviour;
 
 - (id)initWithBridge:(RCTBridge *)bridge;
 - (void)updateType;

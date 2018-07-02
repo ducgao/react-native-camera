@@ -27,6 +27,7 @@
 
 @implementation RNCamera
 
+static UIDeviceOrientation _realOrientation = UIDeviceOrientationUnknown;
 static NSDictionary *defaultFaceDetectorOptions = nil;
 
 - (id)initWithBridge:(RCTBridge *)bridge
@@ -60,9 +61,45 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
         //                                                 selector:@selector(bridgeDidBackground:)
         //                                                     name:EX_UNVERSIONED(@"EXKernelBridgeDidBackgroundNotification")
         //                                                   object:self.bridge];
+        
+        _cm = [[CMMotionManager alloc] init];
+        _cm.deviceMotionUpdateInterval = 0.2f;
+        _cm.accelerometerUpdateInterval = 0.2f;
+        
+        [_cm startAccelerometerUpdatesToQueue:[NSOperationQueue currentQueue]
+                                  withHandler:^(CMAccelerometerData  *accelerometerData, NSError *error) {
+                                      if (!error) {
+                                          [self outputAccelerationData:accelerometerData.acceleration];
+                                      }
+                                      else{
+                                          NSLog(@"%@", error);
+                                      }
+                                  }];
 
     }
     return self;
+}
+
+- (void)outputAccelerationData:(CMAcceleration)acceleration{
+    UIDeviceOrientation orientationNew;
+    
+    if (acceleration.x >= 0.75) {
+        orientationNew = UIDeviceOrientationLandscapeRight;
+    }
+    else if (acceleration.x <= -0.75) {
+        orientationNew = UIDeviceOrientationLandscapeLeft;
+    }
+    else if (acceleration.y <= -0.75) {
+        orientationNew = UIDeviceOrientationPortrait;
+    }
+    else if (acceleration.y >= 0.75) {
+        orientationNew = UIDeviceOrientationPortraitUpsideDown;
+    }
+    else {
+        return;
+    }
+    
+    _realOrientation = orientationNew;
 }
 
 - (void)onReady:(NSDictionary *)event
@@ -326,7 +363,12 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     if ([options[@"orientation"] integerValue]) {
         orientation = [options[@"orientation"] integerValue];
     } else {
-        orientation = [RNCameraUtils videoOrientationForDeviceOrientation:[[UIDevice currentDevice] orientation]];
+        if (self.enableAwesomeCameraBehaviour == true) {
+            orientation = [RNCameraUtils videoOrientationForDeviceOrientation:_realOrientation];
+        }
+        else {
+            orientation = [RNCameraUtils videoOrientationForDeviceOrientation:[[UIDevice currentDevice] orientation]];
+        }
     }
     [connection setVideoOrientation:orientation];
     [self.stillImageOutput captureStillImageAsynchronouslyFromConnection:connection completionHandler: ^(CMSampleBufferRef imageSampleBuffer, NSError *error) {
@@ -437,6 +479,9 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
     if (options[@"quality"]) {
         [self updateSessionPreset:[RNCameraUtils captureSessionPresetForVideoResolution:(RNCameraVideoResolution)[options[@"quality"] integerValue]]];
     }
+    else {
+        [self updateSessionPreset:AVCaptureSessionPresetHigh];
+    }
 
     [self updateSessionAudioIsMuted:!!options[@"mute"]];
 
@@ -448,8 +493,14 @@ static NSDictionary *defaultFaceDetectorOptions = nil;
             [connection setPreferredVideoStabilizationMode:self.videoStabilizationMode];
         }
     }
-    [connection setVideoOrientation:[RNCameraUtils videoOrientationForDeviceOrientation:[[UIDevice currentDevice] orientation]]];
-
+    
+    if (self.enableAwesomeCameraBehaviour == true) {
+        [connection setVideoOrientation:[RNCameraUtils videoOrientationForDeviceOrientation:_realOrientation]];
+    }
+    else {
+        [connection setVideoOrientation:[RNCameraUtils videoOrientationForDeviceOrientation:[[UIDevice currentDevice] orientation]]];
+    }
+    
     if (options[@"codec"]) {
       if (@available(iOS 10, *)) {
         AVVideoCodecType videoCodecType = options[@"codec"];
